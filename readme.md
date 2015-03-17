@@ -2,6 +2,7 @@
 
 ## Draft algorithm
 
+Below is an outline for a revised drafting algorithm
 
   draft(pool, rules, passedRarities = false){
 	if(balanceCost){
