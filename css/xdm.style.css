@@ -1,0 +1,148 @@
+/* Style.defaults_ */
+html,body{
+	font-family: 'Roboto Condensed', sans-serif;
+	font-size: 12pt;
+}
+a{
+	color: #36f;
+}
+ul{
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+/*-_style-*/
+
+
+/* Style.controls */
+.controls button{
+	color: white;
+	background-color: #999;
+}
+.controls button:hover{
+	background-color: #ccc;
+}
+.controls .btn-clear{
+	background-color: #C30;
+	border-color: #966;
+	
+}
+.controls .btn-save{
+	background-color: #040;
+	border-color: #696;
+}
+/*-_style-*/
+
+
+/* Style.top */
+#banner{
+	background-color: #900;
+	color: #EEF;
+	border-bottom: 2px solid white;
+}
+#banner h1,h4{
+	font-weight: bolder;
+	text-shadow: 1px 1px 10px #000;
+}
+#banner h4{
+	color: #000;
+	text-shadow: none;
+	font-size: .8em;
+	
+}
+#banner h4 span.x{
+	color: #fff;
+	font-weight: bolder;
+}
+#banner h4 span.x.c{
+	color: #f99;
+}
+#banner h4 span.x.p{
+	color: #9f9;
+}
+/*-_style-*/
+
+
+/* nav.style */
+
+#banner .active a{
+	color: #369;
+	background-color:white;	
+	box-shadow: 1px -1px 3px #666;
+	
+}
+#banner li a{
+	color: #fff;
+	text-decoration: underline;	
+	border-radius: 5px 5px 0px 0px;
+}
+#banner li a:hover{
+	color: #2626FF;	
+	background-color:#ccc;	
+}
+/*-_style-*/
+
+
+/* columns.Style */
+.column{
+	background-color: #fff;
+}
+.content{
+	box-shadow: 0px 0px 5px #666;
+	background-color: #ccc;
+}
+.left {
+	border-right: 3px solid #ccc;
+}
+.right{	
+	border-left: 3px solid #ccc;
+}
+/*-_style-*/
+
+/* columnControls.style */
+.ccbtn{
+	font-size: 2em;
+	cursor: pointer;
+}
+/*-_style-*/
+/* cards.style */
+.card{
+	margin: 10px 0px;
+	border: 1px solid #ccc;
+	background-color: #fff;
+	padding: 10px;
+	box-shadow: 1px 1px 10px #000;
+}
+.card .title{	
+	text-shadow:
+     -1px -1px 3px #000,  
+      1px -1px 3px #000,
+     -1px  1px 3px #000,
+      1px  1px 3px #000;
+	font-family: 'Oswald', sans-serif;
+	font-weight: bolder;
+	font-size: 1.15em;
+	color: #cc9;
+}
+.title.Common,.title.Starter{
+	color: #BBB;
+}
+.title.Uncommon{
+	color: #9c9;
+}
+.title.Rare{
+	color: #ff9;
+}
+.title.Super.Rare{
+	color: #F96;
+}
+.title.OP{
+	color: #4CA6FF;
+}
+md ul{
+	list-style: square;
+}
+md ul li{
+	margin: 2px 50px;
+}
+/*-_style-*/

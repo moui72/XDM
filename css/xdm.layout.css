@@ -1,0 +1,141 @@
+
+/* Layout.controls */
+.ioc{
+	display: inline;
+}
+.controls{
+	margin: 10px 0px 20px 0px;
+}
+.controls button{
+	margin: 0px 10px 0px 0px;
+	width: 85px;
+}
+/*-_layout-*/
+
+
+/* Layout.top */
+#banner{
+	position: fixed;
+	width: 100%;
+	height: 110px;
+	margin:0px;
+	top: 0px;
+	padding: 20px;
+}
+#banner.min{
+	height: 35px;
+	padding: 0px 20px;
+}
+#banner.min h1,#banner.min h4{
+	display: none;
+}
+#banner h1, #banner h4{
+	text-align: center;
+	padding:0;
+	margin:0;
+}
+#bnr{
+	padding: 0px 0px 5px 0px;
+}
+
+/* nav.layout */
+
+#banner ul{
+	position:relative;
+	display:table-row;
+}
+
+#banner li{
+	display:table-cell;
+	
+}
+#banner li a{
+	display:block;
+	padding: 4px 15px 4px 15px;
+}
+#banner a{
+	padding: 5px;
+	float:right;
+}
+/*-_layout-*/
+
+
+
+/* columns.Layout */
+.column{
+	position: fixed;
+	top: 110px;	
+	height: 100%;
+	padding: 20px;	
+	padding-bottom: 115px;
+}
+.maxd{
+	width: 100%;
+}
+.midd{
+	width: 50%;
+}
+.mind{
+	width: 0px;
+}
+
+.right.maxd{
+	right: auto;
+}
+.content{
+	margin: 2.5% 0px 0px 0px;	
+	overflow-x: auto;
+	overflow-y: scroll;
+	height: 95%;
+	padding: 20px;	
+}
+
+
+.right{	
+	z-index: 100;
+	right: 0;
+}
+/*-_layout-*/
+
+
+/* columnControls.layout */
+.ccbtn{
+	position: fixed;
+	top: 50%;
+	-ms-transform: translateY(-50%);
+	-webkit-transform: translateY(-50%);
+	transform: translateY(-50%);
+	padding: 20px 5px;
+}
+.midd #dcbtn{
+	right: 50%;
+}
+.maxd #dcbtn{
+	right: 0;
+}
+.right .ccbtn{
+
+	left: 50%;
+}
+.left .ccbtn{
+
+}
+
+/*-_layout-*/
+
+
+/* */
+.saveString{
+	text-wrap:unrestricted;
+	width: 150px;
+}
+
+
+
+
+/* cards.layout */
+.card{
+	margin: 10px 0px;
+	padding: 10px;
+}
+/*-_layout-*/

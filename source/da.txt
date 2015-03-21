@@ -1,0 +1,129 @@
+Number|Rarity|Title|SubTitle
+2|Starter|Beholder|Apprentice Aberration
+25|Common|Beholder|Lesser Aberration
+3|Starter|Beholder|Master Aberration
+1|Starter|Beholder|Minion Aberration
+5|Starter|Blue Dragon|Apprentice Dragon
+26|Common|Blue Dragon|Lesser Dragon
+6|Starter|Blue Dragon|Master Dragon
+4|Starter|Blue Dragon|Minion Dragon
+65|Uncommon|Carrion Crawler|Greater Aberration
+27|Common|Carrion Crawler|Lesser Aberration
+97|Rare|Carrion Crawler|Paragon Aberration
+66|Uncommon|Copper Dragon|Greater Dragon
+28|Common|Copper Dragon|Lesser Dragon
+98|Rare|Copper Dragon|Paragon Dragon
+67|Uncommon|Dracolich|Greater Undead Dragon
+29|Common|Dracolich|Lesser Undead Dragon
+99|Rare|Dracolich|Paragon Undead Dragon
+68|Uncommon|Drow Assassin|Greater Humanoid
+30|Common|Drow Assassin|Lesser Humanoid
+100|Rare|Drow Assassin|Paragon Humanoid
+69|Uncommon|Dwarf Cleric|Greater Emerald Enclave
+31|Common|Dwarf Cleric|Lesser Order of the Gauntlet
+101|Rare|Dwarf Cleric|Paragon Emerald Enclave
+70|Uncommon|Elf Wizard|Greater Order of the Gauntlet
+32|Common|Elf Wizard|Lesser Harper
+102|Rare|Elf Wizard|Paragon Order of the Gauntlet
+71|Uncommon|Frost Giant|Greater Elemental
+33|Common|Frost Giant|Lesser Elemental
+103|Rare|Frost Giant|Paragon Elemental
+8|Starter|Gelatinous Cube|Apprentice Ooze
+34|Common|Gelatinous Cube|Lesser Ooze
+9|Starter|Gelatinous Cube|Master Ooze
+7|Starter|Gelatinous Cube|Minion Ooze
+11|Starter|Green Dragon|Apprentice Dragon
+35|Common|Green Dragon|Lesser Dragon
+12|Starter|Green Dragon|Master Dragon
+10|Starter|Green Dragon|Minion Dragon
+72|Uncommon|Half-Dragon|Greater Humanoid
+36|Common|Half-Dragon|Lesser Humanoid
+104|Rare|Half-Dragon|Paragon Humanoid
+14|Starter|Halfling Thief|Apprentice Emerald Enclave
+38|Common|Halfling Thief|Lesser Lords Alliance
+15|Starter|Halfling Thief|Master Zhentarim
+13|Starter|Halfling Thief|Minion Harper
+73|Uncommon|Half-Orc Fighter|Greater Lords Alliance
+37|Common|Half-Orc Fighter|Lesser Emerald Alliance
+105|Rare|Half-Orc Fighter|Paragon Lords Alliance
+17|Starter|Human Paladin|Apprentice Harper
+39|Common|Human Paladin|Lesser Emerald Alliance
+18|Starter|Human Paladin|Master Lords Alliance
+16|Starter|Human Paladin|Minion Order of the Gauntlet
+74|Uncommon|Invisible Stalker|Greater Elemental
+40|Common|Invisible Stalker|Lesser Elemental
+106|Rare|Invisible Stalker|Paragon Elemental
+75|Uncommon|Kobold|Greater Humanoid
+41|Common|Kobold|Lesser Humanoid
+107|Rare|Kobold|Paragon Humanoid
+95|Uncommon|Limited Wish|Greater Spell
+63|Common|Limited Wish|Lesser Spell
+123|Rare|Limited Wish|Paragon Spell
+93|Uncommon|Magic Helmet|Greater Gear
+61|Common|Magic Helmet|Lesser Gear
+121|Rare|Magic Helmet|Paragon Gear
+94|Uncommon|Magic Sword|Greater Gear
+62|Common|Magic Sword|Lesser Gear
+122|Rare|Magic Sword|Paragon Gear
+76|Uncommon|Manticore|Greater Beast
+42|Common|Manticore|Lesser Beast
+108|Rare|Manticore|Paragon Beast
+125|Super Rare|Mind Flayer|Epic Humanoid
+77|Uncommon|Mind Flayer|Greater Humanoid
+43|Common|Mind Flayer|Lesser Humanoid
+78|Uncommon|Minotaur|Greater Humanoid
+44|Common|Minotaur|Lesser Humanoid
+109|Rare|Minotaur|Paragon Humanoid
+79|Uncommon|Mummy|Greater Undead
+45|Common|Mummy|Lesser Undead
+110|Rare|Mummy|Paragon Undead
+80|Uncommon|Orc|Greater Humanoid
+46|Common|Orc|Lesser Humanoid
+111|Rare|Orc|Paragon Humanoid
+81|Uncommon|Owlbear|Greater Beast
+47|Common|Owlbear|Lesser Beast
+112|Rare|Owlbear|Paragon Beast
+82|Uncommon|Pit Fiend|Greater Fiend
+48|Common|Pit Fiend|Lesser Fiend
+113|Rare|Pit Fiend|Paragon Fiend
+96|Uncommon|Prismatic Spray|Greater Spell
+64|Common|Prismatic Spray|Lesser Spell
+124|Rare|Prismatic Spray|Paragon Spell
+83|Uncommon|Purple Worm|Greater Beast
+49|Common|Purple Worm|Lesser Beast
+114|Rare|Purple Worm|Paragon Beast
+126|Super Rare|Red Dragon|Epic Dragon
+84|Uncommon|Red Dragon|Greater Dragon
+50|Common|Red Dragon|Lesser Dragon
+85|Uncommon|Skeleton|Greater Undead
+51|Common|Skeleton|Lesser Undead
+115|Rare|Skeleton|Paragon Undead
+127|Super Rare|Stirge|Epic Beast
+86|Uncommon|Stirge|Greater Beast
+52|Common|Stirge|Lesser Beast
+128|Super Rare|Tarrasque|Epic Aberration
+87|Uncommon|Tarrasque|Greater Aberration
+53|Common|Tarrasque|Lesser Aberration
+88|Uncommon|Treant|Greater Beast
+54|Common|Treant|Lesser Beast
+116|Rare|Treant|Paragon Beast
+20|Starter|Troll|Apprentice Humaniod
+55|Common|Troll|Lesser Humanoid
+21|Starter|Troll|Master Humaniod
+19|Starter|Troll|Minion Humaniod
+89|Uncommon|Umber Hulk|Greater Beast
+56|Common|Umber Hulk|Lesser Beast
+117|Rare|Umber Hulk|Paragon Beast
+90|Uncommon|Unicorn|Greater Beast
+57|Common|Unicorn|Lesser Beast
+118|Rare|Unicorn|Paragon Beast
+23|Starter|Vampire|Apprentice Undead
+58|Common|Vampire|Lesser Undead
+24|Starter|Vampire|Master Undead
+22|Starter|Vampire|Minion Undead
+91|Uncommon|Wererat|Greater Lycanthrope
+59|Common|Wererat|Lesser Lycanthrope
+119|Rare|Wererat|Paragon Lycanthrope
+92|Uncommon|Zombie|Greater Undead
+60|Common|Zombie|Lesser Undead
+120|Rare|Zombie|Paragon Undead

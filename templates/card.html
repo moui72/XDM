@@ -1,0 +1,14 @@
+<li class='card'>
+	<div class='title {{card.Rarity}}'>{{card.Title}}, {{card.SubTitle}}</div>
+	<div><label>Rarity:</label> {{card.Rarity}}, <label>Cost:</label> {{card.Cost}}</div>
+	<div ng-hide='draft'>
+		<div> 
+			<span ng-hide='colDB.inCollection(card)'>[<a href ng-click="colDB.addCard(card)">add to {{collection.name}}</a>] </span>
+			<span ng-show='colDB.inCollection(card)'>[<a href ng-click="colDB.dropCard(card)">drop from {{collection.name}}</a>]  </span>
+		</div>
+		<div class='counts' ng-show='colDB.inCollection(card)'> 
+			<div><a href editable-text='card.cards'>{{card.cards}}</a> <ng-pluralize count="card.cards" when="{'1' : 'card','other' : 'cards'}"></ng-pluralize></div>
+			<div><a href editable-text='card.cards'>{{card.dice}}</a> <ng-pluralize count="card.cards" when="{'1' : 'die','other' : 'dice'}"></ng-pluralize></div>
+		</div>
+	</div>
+</li>
