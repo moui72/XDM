@@ -31,6 +31,36 @@ ul{
 	background-color: #040;
 	border-color: #696;
 }
+.controls .btn-load{
+	background-color: #004;
+	border-color: #669;
+}
+.load{
+	background-color: rgba(0,0,0,.7);
+}
+.load .controls{
+	font-size: .9em;
+	padding: 10px;
+	border: 1px solid #666;
+	border-radius: 5px;
+	background-color: #fff;
+	box-shadow: 1px 1px 5px black;
+}
+.load h1{
+	margin: 0;
+	font-size: 24pt;
+}
+.toolTip{
+	background-color: rgba(0,0,0,.7);
+}
+.toolTipText{
+	font-size: .9em;
+	padding: 10px;
+	border: 1px solid #666;
+	border-radius: 5px;
+	background-color: #fff;
+	box-shadow: 1px 1px 5px black;
+}
 /*-_style-*/
 
 

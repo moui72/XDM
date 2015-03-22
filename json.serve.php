@@ -1,7 +1,5 @@
 <?php
-require_once('classes.lib.php');
-header('Content-type','application/json');
-
+require_once('xdm.lib.php');
 $sets = SetFactory::allSets();
 
 if(!empty($_REQUEST['q'])){
@@ -37,11 +35,38 @@ if(!empty($_REQUEST['q'])){
 							number of teams: default 1,
 							balance cost?: default false,
 							balance rarities?:  default false (recursive call: array(rarities)) 
-				]
-			*/
-			$draft = draft($col,$_REQUEST['rules']);
-			print(json_encode($draft));
+		*/		
+			$request = json_decode(file_get_contents('php://input'));
+			$draft 	= new Draft($request->cards,$request->rules);
+			print json_encode($draft->result());
+
 		}
+	}
+	
+	if($_REQUEST['q'] === 'test_draft'){
+
+		/*	$rules = 
+			[
+				team size: default 6,
+				number of teams: default 1,
+				balance cost?: default false,
+				balance rarities?:  default false (recursive call: array(rarities)) 
+			]
+		*/		
+		$json = '
+		{
+			"teamSize": 6,
+			"teamCount": 2,
+			"balanceRarity": false,
+			"balanceCost": true
+		}';
+		$request 	=  SetFactory::dummyCol();
+		$rules		= json_decode($json);
+
+		$request->rules = $rules;
+		
+		$draft 	= new Draft($request->cards,$request->rules);
+		print json_encode($draft->result());
 	}
 	
 }

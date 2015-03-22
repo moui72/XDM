@@ -1,6 +1,6 @@
 <li class='card'>
-	<div class='title {{card.Rarity}}'>{{card.Title}}, {{card.SubTitle}}</div>
-	<div><label>Rarity:</label> {{card.Rarity}}, <label>Cost:</label> {{card.Cost}}</div>
+	<div class='title {{card.Rarity}}'>{{card.Title}}, {{card.SubTitle || 'Basic Action Card'}}</div>
+	<div><label>Rarity:</label> {{card.Rarity}}, <label>Cost:</label> {{card.Cost || 'Unknown'}}</div>
 	<div ng-hide='draft'>
 		<div> 
 			<span ng-hide='colDB.inCollection(card)'>[<a href ng-click="colDB.addCard(card)">add to {{collection.name}}</a>] </span>

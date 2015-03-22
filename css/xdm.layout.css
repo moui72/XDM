@@ -2,6 +2,7 @@
 /* Layout.controls */
 .ioc{
 	display: inline;
+	
 }
 .controls{
 	margin: 10px 0px 20px 0px;
@@ -9,6 +10,36 @@
 .controls button{
 	margin: 0px 10px 0px 0px;
 	width: 85px;
+}
+.load{
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	left:0;
+	top: 0;
+	padding: 200px 10px;
+}
+.load .controls{
+	width: 50%;
+	height: auto;
+	margin: auto;
+}
+
+.toolTip{
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	left:0;
+	top: 0;
+	padding: 200px 10px;
+}
+.toolTipText{
+	width: 50%;
+	height: auto;
+	margin: auto;
+}
+.dialogue-btn{
+	margin: 20px;
 }
 /*-_layout-*/
 
@@ -127,9 +158,20 @@
 /* */
 .saveString{
 	text-wrap:unrestricted;
-	width: 150px;
+	width: 100%;
+	background-color: #fff;
+	border: 1px solid #666;
+	padding: 5px;
+	margin: 10px;
+	border-radius: 5px;
+	font-size: .8em;
 }
-
+.saveString small{
+	display: block;
+	background-color: #999;
+	overflow-x: scroll;
+	padding: 2px;
+}
 
 
 

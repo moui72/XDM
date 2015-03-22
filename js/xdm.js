@@ -6,6 +6,100 @@
 	});
 	
 	// services
+	app.service('CollectionDataService', function(ipCookie){
+		var name = 'My Collection';
+		var cards = [];
+		this.saveString = '';
+		this.saved = false;
+		this.loaded = false;
+		this.LoadResponse = '';
+		
+		this.getName = function(){
+			return name;
+		}
+		this.getCards = function(){
+			return cards;
+		}
+		
+		this.clearCol = function(){
+			// remove all cards from collection
+			cards = [];
+			this.saveState(false);
+		}		
+		
+		this.saveState = function(isSaved){
+			this.saved = isSaved;
+		}
+		
+		this.setName = function(colName){
+			//Creating a deferred object
+			var response = 'Setting collection name to '+colName;
+			name = colName;
+			this.saveState(false);
+			return response;
+		}
+		
+		this.addCard = function(card){
+			if(!this.inCollection(card)){
+				card.cards = 1;
+				card.dice = 1;
+				card.in = true;
+				cards.push(card);
+				console.log("Added \""+card.Title+', '+card.SubTitle+'\" to '+name+'.');
+				this.saveState(false);
+				return true;
+			}
+			console.log("\""+card.Title+', '+card.SubTitle+'\" was already in '+name+'.');
+			this.saveState(false);
+			return false;
+		}
+		
+		this.dropCard = function(card){
+			var index = this.cards.indexOf(card);
+			if(index !== -1){
+				cards.splice(index, 1);
+				console.log("Dropped \""+card.Title+', '+card.SubTitle+'\" from '+name+'.');
+				this.saveState(false);
+				return true;
+			}
+			console.log("\""+card.Title+', '+card.SubTitle+'\" was not in '+name+'.');
+			return false;
+		}
+		
+		this.inCollection = function(card){
+			if(angular.isDefined(card) && cards.length > 0){
+				for(var i = 0; i<cards.length; i++){
+					if(card === cards[i]){
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+				
+		this.validNumber = function(card){
+			var fix = '';
+			if(isNaN(card.cards)){
+				card.cards = 0;
+				var fix = 'card';
+			}
+			if(isNaN(card.dice)){
+				card.dice = 0;
+				var dfix = 'die';
+			}
+			if(fix !== ''){
+				console.log('Invalid '+fix+' count: '+card.Title+', '+card.SubTitle+' now has 0 '+fix);
+			}else{
+				this.announceCounts(card);
+			}
+		}
+		
+		this.announceCounts = function(card){
+			console.log(card.Title+', '+card.SubTitle+' now has '+card.cards+' cards and '+card.dice+' dice');
+		}
+	
+	});
+	
 	app.factory('AJAXService',function($http, $q){
 		return{
 		  apiPath:'json.serve.php',
@@ -43,13 +137,13 @@
 		  //Returning the promise object
 		  return deferred.promise;
 		  },
-		  draft: function(d,r){
-			  console.log("DRAFTING");
+		  draft: function(d){
+			  console.log("Sending draft request.");
 			//Creating a deferred object
 			var deferred = $q.defer();
 	 
 			//Calling Web API to fetch shopping cart items
-			$http.post(this.apiPath+'?q=draft&rules='+r, JSON.stringify(d)).success(function(data){
+			$http.post(this.apiPath+'?q=draft', JSON.stringify(d)).success(function(data){
 			  //Passing data to deferred's resolve function on successful completion
 			  deferred.resolve(data);
 		  }).error(function(){
@@ -80,6 +174,40 @@
 	});
 
 	// Controllers
+		
+	// Controls active collection: this is the top-level controller
+	function CollectionController($scope,ipCookie,AJAXService,CollectionDataService){
+		this.collection = {};
+		
+		this.updateCol = function(){
+			this.collection.name = CollectionDataService.getName();
+			this.collection.cards = CollectionDataService.getCards();
+			console.log(this.collection);
+		}
+		
+		this.addCard = function(card){
+			return CollectionDataService.addCard(card);
+			this.updateCol();
+		}
+		
+		this.dropCard = function(card){
+			return CollectionDataService.dropCard(card);
+			this.updateCol();
+		}
+		
+		this.inCollection = function(card){
+			return CollectionDataService.inCollection(card);
+		}
+		
+		this.setColName = function(){
+			console.log(CollectionDataService.setName(this.collection.name));
+		}
+		
+		this.updateCol();
+		
+	}
+	app.controller("CollectionController",CollectionController); 
+	
 	// Controls tab views
 	function TabController(){
 		this.tab = 1;
@@ -136,15 +264,26 @@
 	app.controller("ColumnController", ColumnController); 
 	
 	// Controls saving/loading collections
-	function IOController($scope,ipCookie,AJAXService){
+	function IOController($scope,ipCookie,AJAXService,CollectionDataService){
 		
 		this.collectionList = {};
 		this.collectionCount = 0;	
+		$scope.pasteCode = '';
+		$scope.loading = false;
+		
+		this.saved = function(){
+			return CollectionDataService.saved;
+		}
+		
+		this.pasteCode = function(){
+			return this.pasteCode;
+		}
 		
 		this.saveCollection = function(){
-			var col = $scope.collection;
 			// current collection data to save
-			var collectionData = {'name' : col.name, 'cards' : col.cards, 'last' : true};
+			var name = CollectionDataService.getName();
+			var cards = CollectionDataService.getCards();
+			collectionData = {'name' : name, 'cards' : cards, 'last' : true};
 			console.log("Saving "+collectionData.name+" to a cookie.");
 			
 			var cookie = ipCookie('collections');
@@ -166,18 +305,20 @@
 			
 			// save this collection to cookie with key 'last' and to cookie with key '<collectionData.name>'
 			ipCookie('collections', cookie, { expires: 365*21 });
-			this.updateColList();
+			
 			// provide saveString for backing up collections
 			AJAXService.getSaveString(collectionData).then(function(res){
-				$scope.saveString = res;
-				$scope.saved = true;
-				console.log("Displaying "+collectionData.name+" as a paste code for back-up.");
+				$scope.pasteCode  =  res;
+				CollectionDataService.saveState(true);
+				console.log("Displaying "+collectionData.name+" as a paste code for back-up ("+$scope.pasteCode+").");
 			},
 			function(errorMessage){
 				$scope.error=errorMessage;
 			});
 			
+			this.updateColList();
 			
+			$scope.loading = false;
 		}
 	
 		this.updateColList = function(){
@@ -186,6 +327,7 @@
 			if(angular.isDefined(cookies)){
 				var cnt 		= 0;
 				this.collectionList = {};
+				console.log(cookies.data);
 				for(var name in cookies.data){
 					this.collectionList[name] = cookies.data[name];
 					cnt++;
@@ -198,9 +340,11 @@
 		
 		this.loadFromCookie = function(cookie){
 			// load a collection from a cookie
-			$scope.clearCol();	// first, make active collection empty
-			$scope.collection.name  = cookie.name;	// load name
-			$scope.collection.cards = cookie.cards || []; // load cards
+			CollectionDataService.clearCol();	// first, make active collection empty
+			CollectionDataService.setName(cookie.name);	// load name
+			CollectionDataService.setCards(cookie.cards); // load cards
+			this.loading = false;
+			CollectionDataService.saveState(false);
 		}
 		
 		this.killCookie = function(cookie){
@@ -217,122 +361,46 @@
 				console.log('Could not delete collection: '+cookie.name);
 				return false
 			}
-			
-			
-		}
-		
+		}		
 		
 		this.loadFromCode = function(string){
 			data = string.replace(" ","+");			
 			AJAXService.load(data).then(function(res){
-				$scope.collection.name = res.name;
-				$scope.collection.cards = res.cards || [];
-				$scope.loaded = true;
+				this.collection.name = res.name;
+				this.collection.cards = res.cards || [];
+				CollectionDataService.loaded = true;
 			},
 			function(errorMessage){
 				$scope.error=errorMessage;
 			});
+			$scope.saveState = false;
 		}
 		
 		this.updateColList();
+		this.loading = false;
 	}
 	app.controller("IOController",IOController); 
-	
-	// Controls active collection: this is the top-level controller
-	function CollectionController($scope,ipCookie,AJAXService){
-		$scope.collection = {'name' : 'my collection', 'cards' : []};
-		$scope.saveString = '';
-		$scope.saved = false;
-		$scope.loaded = false;
-		$scope.LoadResponse = '';
-		$scope.collectionView = true;
-		
-		
-		this.clearCol = function(){
-			// remove all cards from collection
-			$scope.collection.cards = [];
-		}		
-		$scope.clearCol = this.clearCol;
-		
-		this.setName = function(colName){
-			//Creating a deferred object
-			var response = 'Setting collection name to '+colName;
-			$scope.collection.name = colName;
-		}
-		
-		this.addCard = function(card){
-			if(!this.inCollection(card)){
-				card.cards = 1;
-				card.dice = 1;
-				card.in = true;
-				$scope.collection.cards.push(card);
-				console.log("Added \""+card.Title+', '+card.SubTitle+'\" to '+$scope.collection.name+'.');
-				return true;
-			}
-			console.log("\""+card.Title+', '+card.SubTitle+'\" was already in '+$scope.collection.name+'.');
-			return false;
-		}
-		
-		this.dropCard = function(card){
-			var index = $scope.collection.cards.indexOf(card);
-			if(index !== -1){
-				$scope.collection.cards.splice(index, 1);
-				console.log("Dropped \""+card.Title+', '+card.SubTitle+'\" from '+$scope.collection.name+'.');
-				return true;
-			}
-			console.log("\""+card.Title+', '+card.SubTitle+'\" was not in '+$scope.collection.name+'.');
-			return false;
-		}
-		
-		this.inCollection = function(card){
-			var index = $scope.collection.cards.indexOf(card);
-			if(index === -1){
-				return false;
-			}
-			return true;
-		}
-				
-		this.validNumber = function(card){
-			var fix = '';
-			if(isNaN(card.cards)){
-				card.cards = 0;
-				var fix = 'card';
-			}
-			if(isNaN(card.dice)){
-				card.dice = 0;
-				var dfix = 'die';
-			}
-			if(fix !== ''){
-				console.log('Invalid '+fix+' count: '+card.Title+', '+card.SubTitle+' now has 0 '+fix);
-			}else{
-				this.announceCounts(card);
-			}
-		}
-		
-		this.announceCounts = function(card){
-			console.log(card.Title+', '+card.SubTitle+' now has '+card.cards+' cards and '+card.dice+' dice');
-		}
-	
-	}
-	app.controller("CollectionController",CollectionController); 
+
 	
 	// Controls drafts
 	function DraftController($scope,AJAXService){
-		$scope.draft = '';
+		$scope.draft = {};
 		$scope.rules = {
-			teamSize : 6,
-			teamCount: 2,
-			balanceCost: 'yes',
-			balanceRarity: 'yes'
+			'teamSize' : 6,
+			'teamCount': 2,
+			'balanceCost': true,
+			'balanceRarity': false
 		};
-		$scope.drafted 	= false;
+		$scope.drafted 		= false;
+		$scope.draftedFail 	= false;
 		this.draftList = true;
 		
 						
 		this.draft = function(){
 			col = {};
 			col.name = $scope.collection.name;
-			col.cards = $scope.collectionCards();
+			col.cards = $scope.collection.cards;
+			console.log('Drafting...');
 			/*	$rules = 
 			[
 						team size: default 6,
@@ -341,11 +409,23 @@
 						balance rarities?:  default false (recursive call: array(rarities)) 
 			]
 			*/
-			rules =  $scope.rules || [6,2,'yes','yes'];
-			
-			AJAXService.draft(col,rules).then(function(data){
-				$scope.draft 	= data;
-				$scope.drafted 	= true;
+			col.rules =  $scope.rules;
+
+			AJAXService.draft(col).then(function(data){
+				console.log("Response recieved...");
+				
+				if(angular.isDefined(data) && data.length > 0){
+					$scope.draft 	= data;
+					var message = "Good draft.";
+					$scope.drafted 	= true;
+					$scope.draftedFail = false;	
+				}else{
+					var message = "Bad draft."
+					$scope.drafted 	= false;
+					$scope.draftedFail = true;
+					console.log(data);
+				}
+				console.log(message+" Data: "+$scope.draft+" Drafted? "+$scope.drafted+" Failed? "+$scope.draftedFail);
 			},
 			function(errorMessage){
 				$scope.error=errorMessage;
@@ -367,9 +447,14 @@
 				$scope.sets = data;	
 				$scope.user.set = $scope.sets[$scope.user.activeSet];
 				var map = [];
-				
+				angular.forEach($scope.sets, function (set) {
+					angular.forEach(set.cards, function(card){
+					  card.Cost = parseFloat(card.Cost);
+					});
+				});
 				for(var i = 0;i<$scope.sets.length;i++){
 					map.push({value: i, text: $scope.sets[i].name});
+					
 				}
 				$scope.setsMap	= map;				
 			},
@@ -394,12 +479,24 @@
 		$scope.user.set = $scope.sets[$scope.user.activeSet];
 		
 		$scope.sorts = [
-			{	value: 1, 	text: 'Title',	query: ['Title','Subtitle']	},
-			{	value: 2, 	text: 'Rarity',	query: ['Rarity','Title','Subtitle']	},
-			{	value: 3, 	text: 'Cost',	query: ['Cost','Title','Subtitle']		}
+			{	value: 1, 	text: 'Title',	query: ['Title','SubTitle']	},
+			{	value: 2, 	text: 'Rarity',	query: ['Rarity','Title','SubTitle']	},
+			{	value: 3, 	text: 'Cost',	query: ['Cost','Title','SubTitle']		}
 		];
 		
-		$scope.predicate 	= 'Title';
+		$scope.RaritySortFunction = function (card){
+			var rarityMap = { 
+				'Starter' : 0, 
+				'Common' : 1, 
+				'Uncommon' : 2, 
+				'Rare' : 3, 
+				'Super Rare' : 4, 
+				'OP' : 5
+			};
+			return rarityMap[card.Rarity] || -1;
+		}
+		
+		$scope.predicate 	= ['Title','SubTitle'];
 		$scope.reverse 		= false;
 		
 		$scope.sortSet = function(rev){
@@ -423,8 +520,9 @@
 			var selected = $filter('filter')($scope.sorts, {value: $scope.user.sortBy});
 			return ($scope.user.sortBy !== -1 && selected.length) ? selected[0].text : 'Not set';
 		};
-		
-		
+		$scope.isST = function(item) {
+		  return !(item.SubTitle === null);
+		}		
 	};
 	app.controller("DataController",DataController); 
 	
@@ -434,4 +532,20 @@
 		templateUrl: 'templates/card.html'
 	  };
 	});
+	
+	app.directive('about', function() {
+	  return {
+		restrict: 'E',
+		templateUrl: 'templates/about.html'
+	  };
+	});
+	
+	app.directive('readme', function() {
+	  return {
+		restrict: 'E',
+		templateUrl: 'templates/readme.html'
+	  };
+	});
+	
+	
 })();
