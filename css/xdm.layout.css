@@ -17,12 +17,15 @@
 	height: 100%;
 	left:0;
 	top: 0;
-	padding: 200px 10px;
+	padding: 100px 10px;
 }
 .load .controls{
 	width: 50%;
-	height: auto;
+	min-height: 300px;
+	max-height: 400px;
 	margin: auto;
+	overflow-y: scroll;
+	padding: 20px;
 }
 
 .toolTip{

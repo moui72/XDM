@@ -1,0 +1,58 @@
+<h2><span editable-text="colDB.collection.name" e-form="colName">{{ colDB.collection.name || 'empty' }}</span> ({{colDB.collection.cards.length || 'No'}} <ng-pluralize count="colDB.collection.cards.length" when="{'1' : 'card','other' : 'cards'}"></ng-pluralize>)</h2>
+<div>
+	<div class='load' ng-show='$scope.loading'  >
+		<div class='controls'>
+			<h1>Collections ({{colDB.colListCount || 'none'}})</h1>
+			<p>You have {{ colDB.colListCount || 'no'}} stored collections. </p>
+			<div ng-hide="colDB.colListCount<1">
+				<p>Select a collection from the list below. You can also <a href ng-click="colDB.deleteAll()">clear all app data</a>.</p>
+				<ul ng-repeat="svdCollection in colDB.colList track by $index">
+					<li class='card animate-repeat' > 
+						<!--<pre>DEBUG {{ $index }} {{ svdCollection }}</pre>-->
+						<div class='title'> {{ svdCollection.name }}</div>
+						<div>{{svdCollection.cards.length}}  <ng-pluralize count="cookie.cards.length" when="{'1' : 'card','other' : 'cards'}"></ng-pluralize></div>
+						<div>
+							[<a href ng-click="colDB.loadFromSave(svdCollection.name);$scope.loading = false;">load {{svdCollection.name}} </a>] 
+							[<a href ng-click="colDB.killSave(svdCollection.name)">delete {{svdCollection.name}} </a>] 
+						</div>
+					</li>
+				</ul>
+			</div>
+			<p>Load collection from paste code. {{LoadResponse}}</p>
+			<input type='text' ng-model='loadCode' />
+			<button class="btn btn-load" type='submit' ng-click='colDB.loadFromCode(loadCode);$scope.loading = false;' >load code</button>
+			<div class='dialogue-btn'><button class="btn btn-clear" type='submit' ng-click='$scope.loading=false' >cancel</button></div>
+		</div>
+	</div>
+	
+
+	
+	<div class='controls' ng-hide='$scope.loading'>
+		<div ng-hide='colDB.storage'>
+			Your browser does not support local storage. The app will attempt to use browser cookies as fallback, but the 4kb storage limit of cookies may result in issues. Be sure to keep your back-up paste code in case cookies don't work.
+		</div>
+		<button  title='Rename your collection.' class="btn btn-default" ng-click="colName.$show()" ng-hide="colName.$visible">
+			rename
+		</button>
+		<button title='Save this collection.' class="btn btn-default btn-save" ng-click='colDB.saveCollection()' ng-hide="colName.$visible">save</button>
+		<button title='Load or delete a saved collection.' class="btn btn-default btn-load" ng-click='$scope.loading=true' >load</button>
+		<button title='Empty this collection.' class="btn btn-default btn-clear" ng-click='colDB.clearCol()' ng-hide="colName.$visible">clear</button>
+		<div ng-show='colDB.saved' class='saveString'><label>Paste Code: (<a href ng-click="pastCodeTip=true" >what's this?</a>)</label> <small>{{pasteCode}}</small></div>
+		<div class='toolTip' ng-show='pastCodeTip'>
+			<div class='toolTipText'>
+				<h1>What is a paste code?</h1>
+				The paste code is provided as a way to back-up or transfer your collection(s). By default your XDM data is stored in cookies, which is somewhat unreliable and is limited to a single device. If you keep your most up-to-date past code, you can recover your collection should you ever clear your cookies, and you can import it on other devices.
+				<div class='dialogue-btn'><button class="btn btn-clear" type='submit' ng-click='pastCodeTip=false' >close</button></div>
+			</div>
+		</div>
+	</div>
+		
+	</div>
+	
+	
+<div>
+	<div ng-show="colDB.collection.cards.length == 0">No cards.</div>
+	<ul ng-repeat='card in colDB.collection.cards  track by $index' >									
+		<card ></card>
+	</ul>
+</div>

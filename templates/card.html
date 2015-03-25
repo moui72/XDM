@@ -1,10 +1,10 @@
 <li class='card'>
-	<div class='title {{card.Rarity}}'>{{card.Title}}, {{card.SubTitle || 'Basic Action Card'}}</div>
+	<div class='title {{card.Rarity}}'>{{card.Title}}, {{card.SubTitle || 'Basic Action Card'}} (DEBUG: {{$index}})</div>
 	<div><label>Rarity:</label> {{card.Rarity}}, <label>Cost:</label> {{card.Cost || 'Unknown'}}</div>
 	<div ng-hide='draft'>
 		<div> 
-			<span ng-hide='colDB.inCollection(card)'>[<a href ng-click="colDB.addCard(card)">add to {{collection.name}}</a>] </span>
-			<span ng-show='colDB.inCollection(card)'>[<a href ng-click="colDB.dropCard(card)">drop from {{collection.name}}</a>]  </span>
+			<span ng-hide='colDB.inCollection(card)'>[<a href ng-click="colDB.addCard(card)">add to {{colDB.collection.name}}</a>] </span>
+			<span ng-show='colDB.inCollection(card)'>[<a href ng-click="colDB.dropCard(card)">drop from {{colDB.collection.name}}</a>]  </span>
 		</div>
 		<div class='counts' ng-show='colDB.inCollection(card)'> 
 			<div><a href editable-text='card.cards'>{{card.cards}}</a> <ng-pluralize count="card.cards" when="{'1' : 'card','other' : 'cards'}"></ng-pluralize></div>

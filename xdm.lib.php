@@ -104,20 +104,25 @@ abstract class SetFactory{
 		$allSets = SetFactory::allSets();
 		$pool = array();
 		$rarities = CardFactory::Rarities();
+		$string = '';
 		foreach($col as $card){
-			
 			$idArr = explode('.',$card->id);
 			$set	= $idArr[0];
+			$string .= "SET: $set".PHP_EOL;
 			$num	= $idArr[1];
+			$string .= "NUMBER: $num".PHP_EOL;
 			$rarity = $idArr[2];
+			$string .= "RARITY: $rarity".PHP_EOL;
 			foreach($allSets[$set]->cards() as $setCard){
+				$numRar = array_search($setCard->Rarity,$rarities);
 				if($setCard->Number == $num AND array_search($setCard->Rarity,$rarities) == $rarity){
+				$string .= "Adding... $setCard->Title $setCard->SubTitle (NUM: $setCard->Number RAR: $numRar)".PHP_EOL;
 					if($forDraft){
-						$i = 1;
+						$i = 0;
 						while($i < $card->cards){
-							
+							$string .= "Added $setCard->Title $setCard->SubTitle (NUM: $setCard->Number RAR: $numRar)".PHP_EOL;
 							$i++;	
-# print "Added $card->Title, $card->SubTitle <br/>";
+							$setCard->id = $card->id;
 							$pool[] = $setCard;
 							
 						}
@@ -133,12 +138,14 @@ abstract class SetFactory{
 						}else{
 							$setCard->dice = $card->cards;
 						}
+						$setCard->id = $card->id;
 						$pool[] 		= $setCard;
 					}
+				}else{
+					$string .= "Skipped $setCard->Title $setCard->SubTitle (NUM: $setCard->Number RAR: $numRar)".PHP_EOL;
 				}
 			}
 		}
-		
 		return $pool;
 	}
 }
@@ -313,7 +320,15 @@ class Draft{
 	private $costBinCt		= null;		// number of cards in each bin
 	
 	function __construct($cards,$rules){
-		$this->pool 		= SetFactory::poolFromCol($cards);
+		if(is_array($cards)){
+			$this->pool 		= SetFactory::poolFromCol($cards);
+		}else{
+			try{
+				$this->pool 		= SetFactory::poolFromCol($cards->cards);
+			}catch(Exception $e){
+				print "['fail','could not load collection($e)']";
+			}
+		}
 		$this->teamSize 	= $rules->teamSize;
 		$this->teamCount 	= $rules->teamCount;
 		
@@ -365,7 +380,7 @@ class Draft{
 		if($rules->balanceRarity){
 			// first, count rarities in collection
 			$maxBins = $this->rarityCount($this->pool);
-			foreach($totals as $key => $count){
+			foreach($maxBins as $key => $count){
 				// Max bin size for a rarity is # of rarity in collection / # of teams, rounded down
 				//	(we need each card to have a matched rarity option for the other teams, e.g. 3 teams and 2 SRs means no SRs used)
 				$maxBins[$key] = floor($count/$this->teamCount);
@@ -490,6 +505,7 @@ class Draft{
 		if($this->success){
 			return $this->drafts;
 		}else{
+			array_unshift($this->log,'fail');
 			return $this->log;
 		}
 	}

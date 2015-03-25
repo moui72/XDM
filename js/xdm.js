@@ -1,104 +1,18 @@
 (function() {
-	var app = angular.module('xdm', ["xeditable","ipCookie","yaru22.md"]);
+	var app = angular.module('xdm', ["xeditable","yaru22.md","LocalStorageModule"]);
+	// yaru22.md is angular markdown parser using marked.js
 	
 	app.run(function(editableOptions) {
 	  editableOptions.theme = 'bs3'; // bootstrap3 theme. Can be also 'bs2', 'default'
 	});
 	
-	// services
-	app.service('CollectionDataService', function(ipCookie){
-		var name = 'My Collection';
-		var cards = [];
-		this.saveString = '';
-		this.saved = false;
-		this.loaded = false;
-		this.LoadResponse = '';
-		
-		this.getName = function(){
-			return name;
-		}
-		this.getCards = function(){
-			return cards;
-		}
-		
-		this.clearCol = function(){
-			// remove all cards from collection
-			cards = [];
-			this.saveState(false);
-		}		
-		
-		this.saveState = function(isSaved){
-			this.saved = isSaved;
-		}
-		
-		this.setName = function(colName){
-			//Creating a deferred object
-			var response = 'Setting collection name to '+colName;
-			name = colName;
-			this.saveState(false);
-			return response;
-		}
-		
-		this.addCard = function(card){
-			if(!this.inCollection(card)){
-				card.cards = 1;
-				card.dice = 1;
-				card.in = true;
-				cards.push(card);
-				console.log("Added \""+card.Title+', '+card.SubTitle+'\" to '+name+'.');
-				this.saveState(false);
-				return true;
-			}
-			console.log("\""+card.Title+', '+card.SubTitle+'\" was already in '+name+'.');
-			this.saveState(false);
-			return false;
-		}
-		
-		this.dropCard = function(card){
-			var index = this.cards.indexOf(card);
-			if(index !== -1){
-				cards.splice(index, 1);
-				console.log("Dropped \""+card.Title+', '+card.SubTitle+'\" from '+name+'.');
-				this.saveState(false);
-				return true;
-			}
-			console.log("\""+card.Title+', '+card.SubTitle+'\" was not in '+name+'.');
-			return false;
-		}
-		
-		this.inCollection = function(card){
-			if(angular.isDefined(card) && cards.length > 0){
-				for(var i = 0; i<cards.length; i++){
-					if(card === cards[i]){
-						return true;
-					}
-				}
-			}
-			return false;
-		}
-				
-		this.validNumber = function(card){
-			var fix = '';
-			if(isNaN(card.cards)){
-				card.cards = 0;
-				var fix = 'card';
-			}
-			if(isNaN(card.dice)){
-				card.dice = 0;
-				var dfix = 'die';
-			}
-			if(fix !== ''){
-				console.log('Invalid '+fix+' count: '+card.Title+', '+card.SubTitle+' now has 0 '+fix);
-			}else{
-				this.announceCounts(card);
-			}
-		}
-		
-		this.announceCounts = function(card){
-			console.log(card.Title+', '+card.SubTitle+' now has '+card.cards+' cards and '+card.dice+' dice');
-		}
-	
+	app.config(function (localStorageServiceProvider) {
+	  localStorageServiceProvider
+		.setPrefix('xdm')
+		.setNotify(true, true)
 	});
+		
+
 	
 	app.factory('AJAXService',function($http, $q){
 		return{
@@ -146,8 +60,7 @@
 			$http.post(this.apiPath+'?q=draft', JSON.stringify(d)).success(function(data){
 			  //Passing data to deferred's resolve function on successful completion
 			  deferred.resolve(data);
-		  }).error(function(){
-	 
+		  }).error(function(){	 
 			//Sending a friendly error message in case of failure
 			deferred.reject("An error occurred while drafting.");
 		  });
@@ -173,37 +86,155 @@
 	  };
 	});
 
-	// Controllers
+//- Controllers
 		
 	// Controls active collection: this is the top-level controller
-	function CollectionController($scope,ipCookie,AJAXService,CollectionDataService){
-		this.collection = {};
+	function CollectionController($scope,AJAXService,localStorageService){
+		this.collection 	= {"name" : "My Collection", "cards" : []};		
+		this.saved 			= false;
+		this.colList		= {};
+		this.colListCount	= [];
+		this.active			= false;
 		
-		this.updateCol = function(){
-			this.collection.name = CollectionDataService.getName();
-			this.collection.cards = CollectionDataService.getCards();
-			console.log(this.collection);
+		
+		$scope.pasteCode 	= '';
+		$scope.loading 		= false;
+		
+		if(!localStorageService.isSupported) {
+			console.log("No local storage.");
+			this.storage = false;
+		}else{
+			console.log("Using local storage.");
+			this.storage		= true;
 		}
 		
+		this.onLoad = function(){
+			this.updateColList();
+			this.getLast();
+			if(this.active){
+				this.collection = this.active;
+			}
+		}
+		
+		this.getLast = function(){
+			try{
+				last = localStorageService.get('last');
+				if(angular.isDefined(last)){
+					console.log("Loading last used collection.");
+					this.active = localStorageService.get(last);
+				}
+			}catch(err){
+				console.log("No pre-existing save data ("+err.message+").");
+			}
+		}
+				
+		this.saveCollection = function(){
+			newSave = this.collection;
+			try{
+				oldSave = localStorageService.get(newSave.name);
+				if(angular.isDefined(oldSave)){
+					console.log("Overwriting previously saved collection \""+this.collection.name+"\"");
+				}
+			}catch(err){
+				console.log("No pre-existing save data ("+err.message+").");
+			}
+			
+			localStorageService.set(newSave.name, newSave);
+			console.log("Saving collection: \""+this.collection.name+"\"");
+			this.saved = true;
+			localStorageService.set('last', newSave.name);
+			this.updateColList();
+		}	
+			
+		this.updateColList 		= function(){
+			delete this.colList;
+			this.colList = {};
+			var newColList = localStorageService.keys();
+			console.log("Saved collections: ");
+			for(var colIndex in newColList){
+				var col = localStorageService.get(newColList[colIndex]);
+				console.log(col.name);
+				this.colList[colIndex] = {"name" : col.name, "cards" : col.cards};
+			}
+			this.colListCount = Object.keys(this.colList).length;
+			return true;
+		}
+		
+		this.clearCol = function(){
+			this.collection.cards = [];
+			this.collection.name = "Blank Collection";
+			this.saved = false;
+		}
+		
+		this.clearAllSavedData = function(){
+			localStorageService.clearAll()
+		}
+		
+		this.loadFromSave = function(loadByName){
+			string = '';
+			loadData = localStorageService.get(loadByName);
+			this.collection.name  = loadData.name;
+			this.collection.cards = loadData.cards;
+			localStorageService.set('last', loadByName);
+			this.updateColList();
+			
+		}
+		
+		this.killSave = function(deleteByName){
+			localStorageService.remove(deleteByName);
+			this.updateColList();
+		}		
+		
+		this.loadFromCode = function(string){
+			data = string.replace(" ","+");			
+			AJAXService.load(data).then(function(res){
+				this.collection.name = res.name;	// load name
+				this.collection.cards = res.cards; // load cards
+				$scope.loading = false;
+			},
+			function(errorMessage){
+				$scope.error=errorMessage;
+			});
+		}
+
+		
 		this.addCard = function(card){
-			return CollectionDataService.addCard(card);
-			this.updateCol();
+			if(!this.inCollection(card)){
+				card.cards = 1;
+				card.dice = 1;
+				card.in = true;
+				this.collection.cards.push(card);
+				console.log("Added \""+card.Title+', '+card.SubTitle+'\" to '+this.collection.name+'.');
+				this.saved = false;
+				return true;
+			}
+			console.log("\""+card.Title+', '+card.SubTitle+'\" was already in '+this.collection.name+'.');
+			return false;
 		}
 		
 		this.dropCard = function(card){
-			return CollectionDataService.dropCard(card);
-			this.updateCol();
+			var index = this.collection.cards.indexOf(card);
+			if(index !== -1){
+				this.collection.cards.splice(index, 1);
+				console.log("Dropped \""+card.Title+', '+card.SubTitle+'\" from '+this.collection.name+'.');
+				this.saved = false;
+				return true;
+			}
+			console.log("\""+card.Title+', '+card.SubTitle+'\" was not in '+this.collection.name+'.');
+			return false;
 		}
 		
 		this.inCollection = function(card){
-			return CollectionDataService.inCollection(card);
+			if(angular.isDefined(card) && this.collection.cards.length > 0){
+				for(var i = 0; i<this.collection.cards.length; i++){
+					if(card.id === this.collection.cards[i].id){
+						return true;
+					}
+				}
+			}
+			return false;
 		}
-		
-		this.setColName = function(){
-			console.log(CollectionDataService.setName(this.collection.name));
-		}
-		
-		this.updateCol();
+		this.onLoad();
 		
 	}
 	app.controller("CollectionController",CollectionController); 
@@ -263,125 +294,6 @@
 	}
 	app.controller("ColumnController", ColumnController); 
 	
-	// Controls saving/loading collections
-	function IOController($scope,ipCookie,AJAXService,CollectionDataService){
-		
-		this.collectionList = {};
-		this.collectionCount = 0;	
-		$scope.pasteCode = '';
-		$scope.loading = false;
-		
-		this.saved = function(){
-			return CollectionDataService.saved;
-		}
-		
-		this.pasteCode = function(){
-			return this.pasteCode;
-		}
-		
-		this.saveCollection = function(){
-			// current collection data to save
-			var name = CollectionDataService.getName();
-			var cards = CollectionDataService.getCards();
-			collectionData = {'name' : name, 'cards' : cards, 'last' : true};
-			console.log("Saving "+collectionData.name+" to a cookie.");
-			
-			var cookie = ipCookie('collections');
-			
-			if(angular.isDefined(cookie)){
-				// user data exists, update existing cookie
-				if(angular.isUndefined(cookie.data[collectionData.name])){
-					cookie.count++;
-				}
-				cookie.data[collectionData.name] = collectionData;
-			}else{
-				var collections = {'count' : 0, 'data' : {}};
-				collections.data[collectionData.name] = collectionData;
-				// no user data yet, make a cookie
-				cookie = {};
-				cookie = collections;
-				cookie.count++;
-			}
-			
-			// save this collection to cookie with key 'last' and to cookie with key '<collectionData.name>'
-			ipCookie('collections', cookie, { expires: 365*21 });
-			
-			// provide saveString for backing up collections
-			AJAXService.getSaveString(collectionData).then(function(res){
-				$scope.pasteCode  =  res;
-				CollectionDataService.saveState(true);
-				console.log("Displaying "+collectionData.name+" as a paste code for back-up ("+$scope.pasteCode+").");
-			},
-			function(errorMessage){
-				$scope.error=errorMessage;
-			});
-			
-			this.updateColList();
-			
-			$scope.loading = false;
-		}
-	
-		this.updateColList = function(){
-			// stores contents of 'col' cookie; list of existing collection cookies
-			var cookies 	= ipCookie('collections');
-			if(angular.isDefined(cookies)){
-				var cnt 		= 0;
-				this.collectionList = {};
-				console.log(cookies.data);
-				for(var name in cookies.data){
-					this.collectionList[name] = cookies.data[name];
-					cnt++;
-				}
-				this.collectionCount = cnt;
-				return true;
-			}
-			return false;
-		}
-		
-		this.loadFromCookie = function(cookie){
-			// load a collection from a cookie
-			CollectionDataService.clearCol();	// first, make active collection empty
-			CollectionDataService.setName(cookie.name);	// load name
-			CollectionDataService.setCards(cookie.cards); // load cards
-			this.loading = false;
-			CollectionDataService.saveState(false);
-		}
-		
-		this.killCookie = function(cookie){
-			//delete an existing collection cookie
-			cols = ipCookie('collections');
-			if(angular.isDefined(cols.data[cookie.name])){
-				delete cols.data[cookie.name];
-				cols.count--;
-				console.log('Deleted collection: '+cookie.name);
-				ipCookie('collections',cols, {expires: 365*21}	);
-				this.updateColList();
-				return true;
-			}else{
-				console.log('Could not delete collection: '+cookie.name);
-				return false
-			}
-		}		
-		
-		this.loadFromCode = function(string){
-			data = string.replace(" ","+");			
-			AJAXService.load(data).then(function(res){
-				this.collection.name = res.name;
-				this.collection.cards = res.cards || [];
-				CollectionDataService.loaded = true;
-			},
-			function(errorMessage){
-				$scope.error=errorMessage;
-			});
-			$scope.saveState = false;
-		}
-		
-		this.updateColList();
-		this.loading = false;
-	}
-	app.controller("IOController",IOController); 
-
-	
 	// Controls drafts
 	function DraftController($scope,AJAXService){
 		$scope.draft = {};
@@ -396,11 +308,11 @@
 		this.draftList = true;
 		
 						
-		this.draft = function(){
-			col = {};
-			col.name = $scope.collection.name;
-			col.cards = $scope.collection.cards;
-			console.log('Drafting...');
+		this.draft = function(col){
+			draftData = {};
+			draftData.cards = col.cards;
+			draftData.rules = $scope.rules;
+			console.log('Drafting from '+JSON.stringify(col)+'...');
 			/*	$rules = 
 			[
 						team size: default 6,
@@ -409,23 +321,21 @@
 						balance rarities?:  default false (recursive call: array(rarities)) 
 			]
 			*/
-			col.rules =  $scope.rules;
 
-			AJAXService.draft(col).then(function(data){
-				console.log("Response recieved...");
+			AJAXService.draft(draftData).then(function(data){
+				console.log("Response received...");
 				
-				if(angular.isDefined(data) && data.length > 0){
+				if(angular.isDefined(data) && data.length > 0 && data[0] != 'fail'){
 					$scope.draft 	= data;
-					var message = "Good draft.";
+					var message = "Success.";
 					$scope.drafted 	= true;
 					$scope.draftedFail = false;	
 				}else{
-					var message = "Bad draft."
+					var message = "Failure."
 					$scope.drafted 	= false;
 					$scope.draftedFail = true;
-					console.log(data);
 				}
-				console.log(message+" Data: "+$scope.draft+" Drafted? "+$scope.drafted+" Failed? "+$scope.draftedFail);
+				console.log(message);
 			},
 			function(errorMessage){
 				$scope.error=errorMessage;
@@ -439,10 +349,24 @@
 		
 	// Controls card database
 	function DataController($scope, AJAXService, $filter) {
-		$scope.collectionView = false;
 		$scope.sets = [];		
 				
-		function refreshItems(){
+		$scope.setsMap = [
+			{	value: 0, 	text: ''	},
+			{	value: 1, 	text: ''	},
+			{	value: 2, 	text: ''	},
+			{	value: 3, 	text: ''	}
+		];		
+		
+		$scope.user = {
+			sortBy: 1,
+			activeSet: 1			
+		}; 
+	
+		
+		$scope.user.set = $scope.sets[$scope.user.activeSet];
+		
+		 $scope.refreshItems = function (){
 			AJAXService.getAllItems().then(function(data){
 				$scope.sets = data;	
 				$scope.user.set = $scope.sets[$scope.user.activeSet];
@@ -462,26 +386,13 @@
 				$scope.error = errorMessage;
 			});			
 		}		
-		refreshItems();
-		
-		$scope.setsMap = [
-			{	value: 0, 	text: ''	},
-			{	value: 1, 	text: ''	},
-			{	value: 2, 	text: ''	},
-			{	value: 3, 	text: ''	}
-		];		
-		
-		$scope.user = {
-			sortBy: 1,
-			activeSet: 1			
-		}; 
-		
-		$scope.user.set = $scope.sets[$scope.user.activeSet];
+		$scope.refreshItems();
+	
 		
 		$scope.sorts = [
-			{	value: 1, 	text: 'Title',	query: ['Title','SubTitle']	},
-			{	value: 2, 	text: 'Rarity',	query: ['Rarity','Title','SubTitle']	},
-			{	value: 3, 	text: 'Cost',	query: ['Cost','Title','SubTitle']		}
+			{	value: 1, 	text: 'Title',	query: ['Title',			'SubTitle']	},
+			{	value: 2, 	text: 'Rarity',	query: ['Rarity','Title',	'SubTitle']	},
+			{	value: 3, 	text: 'Cost',	query: ['Cost','Title',		'SubTitle']	}
 		];
 		
 		$scope.RaritySortFunction = function (card){
@@ -493,7 +404,7 @@
 				'Super Rare' : 4, 
 				'OP' : 5
 			};
-			return rarityMap[card.Rarity] || -1;
+			return rarityMap[card.Rarity];
 		}
 		
 		$scope.predicate 	= ['Title','SubTitle'];
@@ -526,6 +437,8 @@
 	};
 	app.controller("DataController",DataController); 
 	
+	
+// - Directives
 	app.directive('card', function() {
 	  return {
 		restrict: 'E',
@@ -539,13 +452,15 @@
 		templateUrl: 'templates/about.html'
 	  };
 	});
+
 	
-	app.directive('readme', function() {
+	app.directive('collection', function() {
 	  return {
 		restrict: 'E',
-		templateUrl: 'templates/readme.html'
+		templateUrl: 'templates/collection.html'
 	  };
 	});
+
 	
 	
 })();
