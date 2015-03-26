@@ -37,7 +37,9 @@
 		<button title='Save this collection.' class="btn btn-default btn-save" ng-click='colDB.saveCollection()' ng-hide="colName.$visible">save</button>
 		<button title='Load or delete a saved collection.' class="btn btn-default btn-load" ng-click='$scope.loading=true' >load</button>
 		<button title='Empty this collection.' class="btn btn-default btn-clear" ng-click='colDB.clearCol()' ng-hide="colName.$visible">clear</button>
+		
 		<div ng-show='colDB.saved' class='saveString'><label>Paste Code: (<a href ng-click="pastCodeTip=true" >what's this?</a>)</label> <small>{{pasteCode}}</small></div>
+		
 		<div class='toolTip' ng-show='pastCodeTip'>
 			<div class='toolTipText'>
 				<h1>What is a paste code?</h1>

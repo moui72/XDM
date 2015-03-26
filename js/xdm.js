@@ -144,6 +144,8 @@
 			this.saved = true;
 			localStorageService.set('last', newSave.name);
 			this.updateColList();
+			
+			// add past code functionality
 		}	
 			
 		this.updateColList 		= function(){
