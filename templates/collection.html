@@ -5,7 +5,7 @@
 			<h1>Collections ({{colDB.colListCount || 'none'}})</h1>
 			<p>You have {{ colDB.colListCount || 'no'}} stored collections. </p>
 			<div ng-hide="colDB.colListCount<1">
-				<p>Select a collection from the list below. You can also <a href ng-click="colDB.deleteAll()">clear all app data</a>.</p>
+				<p>Select a collection from the list below. You can also <a href ng-click="colDB.clearAllSavedData()">clear all app data</a>.</p>
 				<ul ng-repeat="svdCollection in colDB.colList track by $index">
 					<li class='card animate-repeat' > 
 						<!--<pre>DEBUG {{ $index }} {{ svdCollection }}</pre>-->

@@ -16,7 +16,7 @@
 	
 	app.factory('AJAXService',function($http, $q){
 		return{
-		  apiPath:'json.serve.php',
+		  apiPath:'xdm.json-server.php',
 		  getSaveString: function(d){
 			//Creating a deferred object
 			var deferred = $q.defer();
@@ -91,6 +91,7 @@
 	// Controls active collection: this is the top-level controller
 	function CollectionController($scope,AJAXService,localStorageService){
 		this.collection 	= {"name" : "My Collection", "cards" : []};		
+		$scope.AJAXData 	= {"name" : "Load failed!", "cards" : []};		
 		this.saved 			= false;
 		this.colList		= {};
 		this.colListCount	= [];
@@ -169,7 +170,9 @@
 		}
 		
 		this.clearAllSavedData = function(){
-			localStorageService.clearAll()
+			console.log("Deleting all data...");
+			console.log(localStorageService.clearAll());
+			this.updateColList();
 		}
 		
 		this.loadFromSave = function(loadByName){
@@ -190,15 +193,21 @@
 		this.loadFromCode = function(string){
 			data = string.replace(" ","+");			
 			AJAXService.load(data).then(function(res){
-				this.collection.name = res.name;	// load name
-				this.collection.cards = res.cards; // load cards
-				$scope.loading = false;
+				console.log($scope);
+				$scope.AJAXData = res;
+				$scope.colDB.loadAJAXData();
 			},
 			function(errorMessage){
 				$scope.error=errorMessage;
 			});
 		}
+		
+		this.loadAJAXData = function(){
+			this.collection.name  = $scope.AJAXData.name;
+			this.collection.cards = $scope.AJAXData.cards;
+		}
 
+		$scope.loadAJAXData = this.loadAJAXData;
 		
 		this.addCard = function(card){
 			if(!this.inCollection(card)){
@@ -305,12 +314,14 @@
 			'balanceCost': true,
 			'balanceRarity': false
 		};
+		$scope.loading 		= false;
 		$scope.drafted 		= false;
 		$scope.draftedFail 	= false;
-		this.draftList = true;
+		this.draftList		= true;
 		
 						
 		this.draft = function(col){
+			$scope.loading = true;
 			draftData = {};
 			draftData.cards = col.cards;
 			draftData.rules = $scope.rules;
@@ -342,6 +353,7 @@
 			function(errorMessage){
 				$scope.error=errorMessage;
 			});
+			$scope.loading 	= false;
 		}
 		this.sayRules = function(){
 			console.log("Rules: "+JSON.stringify($scope.rules));
@@ -352,6 +364,7 @@
 	// Controls card database
 	function DataController($scope, AJAXService, $filter) {
 		$scope.sets = [];		
+		$scope.loading = true;
 				
 		$scope.setsMap = [
 			{	value: 0, 	text: ''	},
@@ -369,6 +382,7 @@
 		$scope.user.set = $scope.sets[$scope.user.activeSet];
 		
 		 $scope.refreshItems = function (){
+			$scope.loading = true;
 			AJAXService.getAllItems().then(function(data){
 				$scope.sets = data;	
 				$scope.user.set = $scope.sets[$scope.user.activeSet];
@@ -386,7 +400,8 @@
 			},
 			function(errorMessage){
 				$scope.error = errorMessage;
-			});			
+			});		
+			$scope.loading = false;
 		}		
 		$scope.refreshItems();
 	
@@ -413,6 +428,7 @@
 		$scope.reverse 		= false;
 		
 		$scope.sortSet = function(rev){
+			$scope.loading = '/XDM/img/ajax-loader.gif';
 			var selected = $filter('filter')($scope.sorts, {value: $scope.user.sortBy});
 			$scope.predicate = selected[0].query;
 			if(typeof rev !== -1){
@@ -422,6 +438,7 @@
 					$scope.reverse 	= true;
 				}
 			}
+			$scope.loading = false;
 		}
 
 		$scope.showSets = function () {

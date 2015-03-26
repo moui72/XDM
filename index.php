@@ -2,6 +2,7 @@
 <html ng-app='xdm'>
 
 <head>
+<title>XDM &raquo; Dice Masters Randomiser</title>
 <meta charset="UTF-8">
 
 <!-- Google fonts -->
@@ -21,8 +22,6 @@
 <!-- xeditable -->
 <script src="js/xeditable.min.js"></script>
 <link rel="stylesheet" href="css/xeditable.css">
-
-<link rel="stylesheet" href="css/dialogs.min.css">
 
 <!-- angular md [used marked.js] -->
 <script type="text/javascript" src="js/angular-md.min.js"></script>
@@ -89,6 +88,10 @@
 							
 							<small>(<span ng-show='reverse'>&uarr;  <a href  ng-click="sortSet(reverse)">Descending</a></span><span ng-hide='reverse'>&darr; <a href  ng-click="sortSet(reverse)">Ascending</a></span>)</small>.
 						</div>
+						<div class='loading' ng-show='db.loading'>
+							<img src='img/ajax-loader.gif'>
+							<p>loading</p>
+						</div>
 						<ul ng-repeat="card in sets[user.activeSet].cards | orderBy:predicate:reverse | filter:isST">
 							<card ng-hide="colDB.inCollection(card)"></card>
 						</ul>							
@@ -123,6 +126,10 @@
 						</form>
 						<div ng-show='draftedFail'>
 							Failed to generate draft.
+						</div>
+						<div class='loading' ng-show='loading'>
+							<img src='img/ajax-loader.gif'>
+							<p>loading</p>
 						</div>
 						<div ng-show="drafted" ng-repeat="team in draft track by $index">
 							<h3>Team {{$index}}</h3>

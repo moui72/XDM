@@ -1,0 +1,4 @@
+- Changed backend to load straight from source files, rather than caching.
+- Added loading bar
+- Fixed clearing all saved data
+- Fixed loading from code

@@ -2,22 +2,6 @@
 
 
 abstract class SetFactory{
-	
-	function dummyCol(){
-		$sets = SetFactory::allSets();
-		$cards = new Collection();
-		$cards->cards = array();
-		$cards->name = 'dummy col';
-		$n = mt_rand(1,3);
-
-		$cards->cards = array_merge($cards->cards, $sets[$n]->cards());
-
-		foreach($cards->cards as $index => $obj){
-			$obj->cards = 2;
-		}
-		return $cards;
-	}
-	
 	function create($file,$name = '',$universe = '',$safeName = ''){
 		$fp = $file;
 		$db = new Set($name,$universe,$safeName);
@@ -60,45 +44,21 @@ abstract class SetFactory{
 	function createAll(){
 		$fp = 'source/';
 		$sets = SetFactory::sets();
+		$dataArr = array();
 		// [array(Set,Universe,SetName,fileName), ...]
 		
 		foreach($sets as $index => $data){
 			$set = SetFactory::Create($fp.$data[3],$data[0],$data[1],$data[2]);
-			SetFactory::save($set);
+			$dataArr[] = $set;
 		}
-		return SetFactory::allSets();
+		return $dataArr;
 	}
 	
-	function save($set,$file = null){
-		if(empty($file)){
-			$file = 'sets/'.$set->safeName();
-		}
-		$setString = serialize($set);
-		if(file_put_contents($file,$setString) > 0){
-			return true;
-		}else{
-			throw new Exception("Failed to save set to $file.");
-			return false;
-		}
-	}
 	
 	function allSets(){
-		$sets = glob('sets/*.set');
-		$setsArr = array();
-		foreach($sets as $set){
-			$setsArr[] = SetFactory::load($set);
-		}
-		return $setsArr;
+		return SetFactory::createAll();;
 	}
-	
-	function load($file){
-		$set = unserialize(file_get_contents($file));
-		if(!$set){
-			throw new Exception("Failed to load $file as set.");
-			return false;
-		}
-		return $set;
-	}
+
 	
 	function poolFromCol($col,$forDraft = true){
 		$allSets = SetFactory::allSets();
@@ -293,7 +253,7 @@ function clarifyJSON($string){
 		$cardObj->dice = $fields[2];
 		$collection->cards[] = $cardObj;
 	}
-	$collection->cards = SetFactory::poolFromCol($collection,$forDraft = false); 
+	$collection->cards = SetFactory::poolFromCol($collection->cards,$forDraft = false); 
 	return $collection;
 	
 }
