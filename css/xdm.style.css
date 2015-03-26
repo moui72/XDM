@@ -46,7 +46,7 @@ ul{
 	box-shadow: 1px 1px 5px black;
 }
 .load h1{
-	margin: 0;
+
 	font-size: 24pt;
 }
 .toolTip{
@@ -54,7 +54,6 @@ ul{
 }
 .toolTipText{
 	font-size: .9em;
-	padding: 10px;
 	border: 1px solid #666;
 	border-radius: 5px;
 	background-color: #fff;
@@ -69,7 +68,7 @@ ul{
 	color: #EEF;
 	border-bottom: 2px solid white;
 }
-#banner h1,h4{
+#banner h1, #banner h4{
 	font-weight: bolder;
 	text-shadow: 1px 1px 10px #000;
 }
@@ -137,45 +136,32 @@ ul{
 /* cards.style */
 .card{
 	margin: 10px 0px;
-	border: 1px solid #ccc;
 	background-color: #fff;
-	padding: 10px;
 	box-shadow: 1px 1px 10px #000;
 }
-.card .title{	
-	text-shadow:
-     -1px -1px 3px #000,  
-      1px -1px 3px #000,
-     -1px  1px 3px #000,
-      1px  1px 3px #000;
-	font-family: 'Oswald', sans-serif;
-	font-weight: bolder;
+.card .title h4{	
+	font-weight: bold;
 	font-size: 1.15em;
-	color: #cc9;
+	color: #000;
 }
+
 .title.Common,.title.Starter{
-	color: #BBB;
+	background-color: #BBB;
 }
 .title.Uncommon{
-	color: #9c9;
+	background-color: #9f9;
 }
 .title.Rare{
-	color: #ff9;
+	background-color: #ff6;
 }
 .title.Super.Rare{
-	color: #F96;
+	background-color: #f99;
 }
 .title.OP{
-	color: #4CA6FF;
+	background-color: #4CA6FF;
 }
 md ul{
 	list-style: square;
-}
-md ul li{
-	margin: 2px 50px;
-}
-.draft{
-	padding: 10px;
 }
 form.ng-invalid{
 	background-color: #f33;

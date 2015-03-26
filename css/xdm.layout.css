@@ -40,6 +40,7 @@
 	width: 50%;
 	height: auto;
 	margin: auto;
+	padding: 10px;
 }
 .dialogue-btn{
 	margin: 20px;
@@ -181,12 +182,26 @@
 /* cards.layout */
 .card{
 	margin: 10px 0px;
+}
+.card>div{
 	padding: 10px;
+}
+.title h4{
+	margin: 0;
+	padding: 5px;
 }
 /*-_layout-*/
 
 .loading{
 	text-align: center;
 	margin: 20px;
+	padding: 10px;
+}
+
+
+md ul li{
+	margin: 2px 50px;
+}
+.draft{
 	padding: 10px;
 }

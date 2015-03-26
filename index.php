@@ -92,8 +92,8 @@
 							<img src='img/ajax-loader.gif'>
 							<p>loading</p>
 						</div>
-						<ul ng-repeat="card in sets[user.activeSet].cards | orderBy:predicate:reverse | filter:isST">
-							<card ng-hide="colDB.inCollection(card)"></card>
+						<ul >
+							<card ng-hide="colDB.inCollection(card)" ng-repeat="card in sets[user.activeSet].cards | orderBy:predicate:reverse | filter:isST"></card>
 						</ul>							
 					</div>
 					<!--  DRAFT!  -->
