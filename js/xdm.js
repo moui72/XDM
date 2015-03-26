@@ -144,6 +144,10 @@
 			console.log("Saving collection: \""+this.collection.name+"\"");
 			this.saved = true;
 			localStorageService.set('last', newSave.name);
+			AJAXService.getSaveString(newSave).then(function(res){
+				$scope.pasteCode 	= res;
+				console.log('Displaying paste code.');
+			});
 			this.updateColList();
 			
 			// add past code functionality
