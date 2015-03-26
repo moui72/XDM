@@ -1,5 +1,7 @@
 <li class='card'>
-	<div class='title {{card.Rarity}}'>{{card.Title}}, {{card.SubTitle || 'Basic Action Card'}} (DEBUG: {{$index}})</div>
+	<div class='title {{card.Rarity}}'>
+		{{card.Title}},	{{card.SubTitle || 'Basic Action Card'}}
+	</div>
 	<div><label>Rarity:</label> {{card.Rarity}}, <label>Cost:</label> {{card.Cost || 'Unknown'}}</div>
 	<div ng-hide='draft'>
 		<div> 
