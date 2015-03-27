@@ -1,5 +1,6 @@
 March 27
-- began implementation of routes
+- implemented importing from MDMr
+- implemented routes
 ---------------------
 - Changed backend to load straight from source files, rather than caching.
 - Added loading bar
