@@ -2,6 +2,7 @@
 
 
 abstract class SetFactory{
+
 	function create($file,$name = '',$universe = '',$safeName = ''){
 		$fp = $file;
 		$db = new Set($name,$universe,$safeName);
@@ -213,9 +214,31 @@ class Card{
 }
 
 class Collection{
+
+	public $cards = array();
 	
 	function json(){
 		return json_encode($this);
+	}
+	
+	function add($cardNum, $amt){
+		$set = SetFactory::createAll();
+		$avx = $set[1]->cards();
+		$added = false;
+		$log = array();
+		foreach($avx as $card){
+			$log[] = "$card->Title, $card->SubTitle ";
+			if($card->Number == $cardNum AND $card->Rarity != 'OP'){
+				$log[] =  "added!";
+				$newCard 		= $card;
+				$card->cards 	= $amt;
+				$this->cards[] 	= $newCard;
+				$added 			= true;
+			}else{
+				$log[] =  "skipped.";
+			}
+		}
+		return $added;
 	}
 }
 
@@ -227,10 +250,12 @@ function inflate($string){
 	return gzinflate(base64_decode($string));
 }
 
-
 function abstractJSON($obj){
 	$string = $obj->name.':';
 	foreach($obj->cards as $card){
+		if(empty($card->dice)){
+			$card->dice = 1;
+		}
 		$string .= $card->id . '|' . $card->cards . '|' . $card->dice . ';';
 	}
 	$string = trim($string,';');
@@ -258,7 +283,6 @@ function clarifyJSON($string){
 	
 }
 
-
 class Draft{
 	// this class generates team(s) based on requested draft rules
 	private $pool 		= array();
@@ -275,7 +299,7 @@ class Draft{
 	// log errors
 	private $log		= array();
 	
-	private $maxRarityBinCt	= null;	// max number of cards in each rarity bin
+	private $maxRarityBinCt	= null;		// max number of cards in each rarity bin
 	private $lastRarityBinCt	= null;	// max number of cards in each rarity bin
 	private $costBinCt		= null;		// number of cards in each bin
 	
@@ -472,6 +496,35 @@ class Draft{
 
 }
 
+class Conversion{
 
+	function __construct($data){
+		try{
+			$string = $this->toClearString($data);
+		}catch(Exception $e){
+			print "Bad code (".$e->getMessage().")";
+		}
+		$collection = new Collection();
+		$collection->name = 'Imported Collection';
+		
+		foreach(str_split($string) as $index => $count){
+			$collection->add($index,$count);
+		}
+		$this->collection =  $collection;
+	}
+
+	function saveString(){
+		return abstractJSON($this->collection);
+	}
+
+	function toClearString($out){
+		if($string = gzuncompress(base64_decode(urldecode($out)))){
+			return $string;
+		}else{
+			throw new Exception('invalid save code.');
+		}
+	}
+
+}
 
 ?>

@@ -1,0 +1,47 @@
+
+					<!--  DRAFT!  -->
+					<div>
+						<h1>Get draft</h1>
+						<p>
+							Draft cards for a game. 
+							<span class="error" >
+								Team size must be an integer and between 1 and 20.
+							</span>
+							<span class="error" >
+								Team count must be an integer and between 1 and 6.
+							</span>
+						</p>
+						<form name='draftRules' novalidate 	>
+							<div class='draft'>
+							
+								Team size: 		<input name='size' type='number' ng-model="rules.teamSize" value="{{rules.teamSize}}" min="1" max="20" required /> 
+								
+								Team count: 	<input name='count' type='number' ng-model="rules.teamCount" value="{{rules.teamSize}}" min="1" max='6' required /> 
+								
+								Balance cost: 	<input type='checkbox' ng-model="rules.balanceCost" value="true" >
+								
+								Balance rarity: <input type='checkbox' ng-model="rules.balanceRarity" value="false">
+								
+								<button ng-click="drafts.draft(colDB.collection)">draft</button>
+								<!--<button ng-click="drafts.sayRules()">rules</button>-->
+								
+							</div>
+						</form>
+						<div ng-show='draftedFail'>
+							Failed to generate draft.
+						</div>
+						<div class='loading' ng-show='loading'>
+							<img src='img/ajax-loader.gif'>
+							<p>loading</p>
+						</div>
+						<div ng-show="drafted" ng-repeat="team in draft track by $index">
+							<h3>Team {{$index}}</h3>
+							<ul>
+								<li ng-repeat="card in team track by $index">
+									<card></card>
+								</li>
+
+							</ul>
+						</div>
+						
+					</div>	

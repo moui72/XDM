@@ -9,8 +9,8 @@
 				<ul ng-repeat="svdCollection in colDB.colList track by $index">
 					<li class='card animate-repeat' > 
 						<!--<pre>DEBUG {{ $index }} {{ svdCollection }}</pre>-->
-						<div class='title'> {{ svdCollection.name }}</div>
-						<div>{{svdCollection.cards.length}}  <ng-pluralize count="cookie.cards.length" when="{'1' : 'card','other' : 'cards'}"></ng-pluralize></div>
+						<div class='title OP'> {{ svdCollection.name }}</div>
+						<div>{{svdCollection.cards.length}}  <ng-pluralize count="svdCollection.cards.length" when="{'1' : 'card','other' : 'cards'}"></ng-pluralize></div>
 						<div>
 							[<a href ng-click="colDB.loadFromSave(svdCollection.name);$scope.loading = false;">load {{svdCollection.name}} </a>] 
 							[<a href ng-click="colDB.killSave(svdCollection.name)">delete {{svdCollection.name}} </a>] 

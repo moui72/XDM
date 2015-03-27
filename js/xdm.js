@@ -1,15 +1,43 @@
 (function() {
-	var app = angular.module('xdm', ["xeditable","yaru22.md","LocalStorageModule"]);
+	var app = angular.module('xdm', [
+		"xeditable",
+		"yaru22.md",
+		"LocalStorageModule",
+		"ngRoute",
+	]);
+	// xeditable allows for "click to edit" text, used for collection title. 
 	// yaru22.md is angular markdown parser using marked.js
+	// LocalStorage uses html5 storage for saving collections
+	// ngRoute allows for URL-based navigation
 	
 	app.run(function(editableOptions) {
 	  editableOptions.theme = 'bs3'; // bootstrap3 theme. Can be also 'bs2', 'default'
 	});
 	
-	app.config(function (localStorageServiceProvider) {
-	  localStorageServiceProvider
-		.setPrefix('xdm')
-		.setNotify(true, true)
+	app.config(function (localStorageServiceProvider,$routeProvider,$locationProvider) {
+		localStorageServiceProvider
+			.setPrefix('xdm')
+			.setNotify(true, true);
+		$routeProvider
+			.when(
+				"/about", {
+					templateUrl: 'templates/about.html'
+			})
+			.when(
+				"/draft", {
+					templateUrl: 'templates/draft.html',
+					controller :"DraftController",
+					controllerAs:"drafts" 
+			})
+			.when(
+				"/", {
+					templateUrl: 'templates/database.html',
+					controller : "DataController",
+					controllerAs: "db" 
+			})
+		.otherwise({
+			redirectTo: "/"
+		});
 	});
 		
 
@@ -89,14 +117,14 @@
 //- Controllers
 		
 	// Controls active collection: this is the top-level controller
-	function CollectionController($scope,AJAXService,localStorageService){
+	function CollectionController($scope,AJAXService,localStorageService, $route, $routeParams, $location){
 		this.collection 	= {"name" : "My Collection", "cards" : []};		
 		$scope.AJAXData 	= {"name" : "Load failed!", "cards" : []};		
 		this.saved 			= false;
 		this.colList		= {};
 		this.colListCount	= [];
 		this.active			= false;
-		
+		$scope.$location = $location;
 		
 		$scope.pasteCode 	= '';
 		$scope.loading 		= false;
@@ -115,6 +143,13 @@
 			if(this.active){
 				this.collection = this.active;
 			}
+		}
+		
+		this.onTab = function(check){
+			if(check == $location.path()){
+				return true;
+			}
+			return false;
 		}
 		
 		this.getLast = function(){
@@ -160,8 +195,10 @@
 			console.log("Saved collections: ");
 			for(var colIndex in newColList){
 				var col = localStorageService.get(newColList[colIndex]);
-				console.log(col.name);
-				this.colList[colIndex] = {"name" : col.name, "cards" : col.cards};
+				if(angular.isDefined(col.name)){
+					console.log(col.name);
+					this.colList[colIndex] = {"name" : col.name, "cards" : col.cards};
+				}
 			}
 			this.colListCount = Object.keys(this.colList).length;
 			return true;

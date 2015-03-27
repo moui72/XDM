@@ -1,0 +1,25 @@
+
+					<!-- the DB -->
+					<div ng-controller='DataController as db'>					
+						<h1>Set: {{ sets[user.activeSet].name }}</h1>
+						<div class='sorts'>
+							<span>
+								<label>Showing:</label> 								
+								<select ng-model="user.activeSet" ng-options="s.value as s.text for s in setsMap"></select> cards.
+							</span>
+							<br/>
+							<span>
+								<label>Sorted by:</label>
+								<select ng-model="user.sortBy" ng-options="s.value as s.text for s in sorts" ng-change="sortSet()"></select> cards.
+							</span>
+							
+							<small>(<span ng-show='reverse'>&uarr;  <a href  ng-click="sortSet(reverse)">Descending</a></span><span ng-hide='reverse'>&darr; <a href  ng-click="sortSet(reverse)">Ascending</a></span>)</small>.
+						</div>
+						<div class='loading' ng-show='db.loading'>
+							<img src='img/ajax-loader.gif'>
+							<p>loading</p>
+						</div>
+						<ul >
+							<card ng-hide="colDB.inCollection(card)" ng-repeat="card in sets[user.activeSet].cards | orderBy:predicate:reverse | filter:isST"></card>
+						</ul>							
+					</div>
