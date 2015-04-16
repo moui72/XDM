@@ -43,15 +43,15 @@
 		<h4> &lt; <span class='x' title='fully implemented'>AvX</span>, <span class='x' title='fully implemented'>Ultimate X-men</span>, <span class='x'  title='fully implemented'>Yu-Gi-Oh</span>, <span class='x p'  title='partially implemented'>D&amp;D</span>, <span class='x c'  title='not yet implemented'>DC</span> &gt;  Dice Masters</h4>
 	</div>
 	<!-- main nav -->
-	<ul>
-		<li g-class="{ active:colDB.onTab('/manage') }">
-			<a href="#manage">Edit active collection</a>
+	<ul ng-controller='TabController as tab'>
+		<li ng-class="{ active:colDB.onTab('/') }">
+			<a href="#manage" ng-click="colDB.onTab">Edit active collection</a>
 		</li>
-		<li g-class="{ active:colDB.onTab('/draft') }">
-			<a href="#draft" ng-click="tab.setTab(2)">Draft teams</a>
+		<li ng-class="{ active:colDB.onTab('/draft') }">
+			<a href="#draft" >Draft teams</a>
 		</li>
-		<li g-class="{ active:colDB.onTab('/about') }">
-			<a href="#about" ng-click="tab.setTab(3)">About XDM</a>
+		<li ng-class="{ active:colDB.onTab('/about') }">
+			<a href="#about" >About XDM</a>
 		</li>
 	</ul>
 </div>

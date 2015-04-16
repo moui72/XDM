@@ -149,11 +149,7 @@
 	right: 0;
 }
 .right .ccbtn{
-
 	left: 50%;
-}
-.left .ccbtn{
-
 }
 
 /*-_layout-*/
@@ -176,9 +172,6 @@
 	overflow-x: scroll;
 	padding: 2px;
 }
-
-
-
 /* cards.layout */
 .card{
 	margin: 10px 0px;
@@ -197,8 +190,6 @@
 	margin: 20px;
 	padding: 10px;
 }
-
-
 md ul li{
 	margin: 2px 50px;
 }

@@ -143,10 +143,12 @@
 			if(this.active){
 				this.collection = this.active;
 			}
+			
 		}
 		
 		this.onTab = function(check){
-			if(check == $location.path()){
+			console.log($scope.$location.path());
+			if(check == $scope.$location.path()){
 				return true;
 			}
 			return false;
@@ -208,6 +210,7 @@
 			this.collection.cards = [];
 			this.collection.name = "Blank Collection";
 			this.saved = false;
+			console.log(this.onTab('/'));
 		}
 		
 		this.clearAllSavedData = function(){
