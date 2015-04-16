@@ -1,7 +1,0 @@
-I've updated an app that I made for AvX Dice Masters to include Uncanny X-Men, Yu-Gi-Oh and D&D*, and I plan to keep it updated as card lists become available.
-
-I use this to randomize my games because I keep my cards alphabetized, so shuffling is inconvenient.
-
-Please use it if you find it useful, and feel free to post feedback and bugs on this thread!
-
-http://gotu-game.com/XDM/
